@@ -2,6 +2,11 @@ from tkinter import Entry, END, Canvas, messagebox
 from graph_operation import *
 
 
+dataError = "Введите в поле х: координату х(число)\n"\
+            "в поле у: координату у(число)\nв поле множество: "\
+            "1 - первое мн., 2- второе мн."
+
+
 def delPoint(listsPoints, listsBox, placeGraph):
     select = list(listsBox[0].curselection())
     select2 = list(listsBox[1].curselection())
@@ -18,8 +23,6 @@ def delPoint(listsPoints, listsBox, placeGraph):
         showPoints(placeGraph, listsPoints)
     except:
         print("del point: no del point in listPoint 2\n")
-
-
 
 
 def showPoints(placeGraph, listPoints, singlePiece=None, minX=None, minY=None):
@@ -44,7 +47,8 @@ def showPoints(placeGraph, listPoints, singlePiece=None, minX=None, minY=None):
 def createGraph(placeGraph, listPoints, isVisual=False):
     allPoints = listPoints[0] + listPoints[1]
     list1, list2 = [], []
-    isExist = 0
+    para = 0
+    x, y = 0, 0
 
     if len(listPoints[0]) >= 3:
         list1 = findCircle(listPoints[0])
@@ -74,26 +78,20 @@ def createGraph(placeGraph, listPoints, isVisual=False):
                 isLeftBorder = abs(list1[i][0] - list1[i][2] 
                     - list2[j][0] - list2[j][2]) <= 0.01   
 
-                print("is =", isRightBorder, isLeftBorder)
-
                 if isRightBorder:
                     x, y = getСoordPoint((list1[i][0] + list1[i][2], 1000), 
                                           curSinglePiece, minX, minY)
-
-                    paintCircle(placeGraph, curSinglePiece, minX, minY, list1[i], color="gray")
-                    paintCircle(placeGraph, curSinglePiece, minX, minY, list2[j])
-                    placeGraph.create_line(x, 0, x, 800, width=2)
-                    para += 1
                 elif isLeftBorder:
                     x, y = getСoordPoint((list1[i][0] - list1[i][2], 1000), 
                                           curSinglePiece, minX, minY)
-
+                
+                if isRightBorder or isLeftBorder:
                     paintCircle(placeGraph, curSinglePiece, minX, minY, list1[i], color="gray")
                     paintCircle(placeGraph, curSinglePiece, minX, minY, list2[j])
                     placeGraph.create_line(x, 0, x, 800, width=2)
                     para += 1
 
-        if not(isExist):
+        if not(para):
             messagebox.showinfo(title=None, message="Подходящих пар окружностей не найдено")
     else:
         for point in list1:
@@ -115,35 +113,33 @@ def addPoint(placeGraph, listEntry, listPoints, listBoxs):
                                 "1 - первое мн., 2- второе мн.")
             list(map(lambda x: x.delete(0, END), listEntry))
     except:
-        messagebox.showinfo(title="Некорректный ввод",
-                            message="Введите в поле х: координату х(число)\n"
-                            "в поле у: координату у(число)\nв поле множество: "
-                            "1 - первое мн., 2- второе мн.")
+        messagebox.showinfo(title="Некорректный ввод", message=dataError)
         print("add point: error type!\n")
         return
 
     line = (listEntry[0].get() + " " + listEntry[1].get()).split()
     try:
+        print(len(line), typePoint in [1, 2])
         if len(line) == 2:
-            if typePoint == 1:
-                listPoints[0].append((float(line[0]),
-                                      float(line[1]), typePoint))
-                listBoxs[0].insert(END, str("(" + str(listPoints[0][-1][0]) + ", "
-                                            + str(listPoints[0][-1][1]) + ")"))
-            elif typePoint == 2:
-                listPoints[1].append((float(line[0]), float(line[1]), typePoint))
-                listBoxs[1].insert(END, str("(" + str(listPoints[1][-1][0]) + ", "
-                + str(listPoints[1][-1][1]) + ")"))
+            if typePoint in [1, 2]:
+                i = typePoint - 1
+                print(2)
+                listPoints[i].append((float(line[0]), float(line[1]), typePoint))
+                data = "".join(["(", str(listPoints[i][-1][0]), 
+                    ", ", str(listPoints[i][-1][1]), ")"])
+                print(3)
+                listBoxs[i].insert(END, data)
+                print(4)
+            # elif typePoint == 2:
+            #     listPoints[1].append((float(line[0]), float(line[1]), typePoint))
+            #     listBoxs[1].insert(END, str("(" + str(listPoints[1][-1][0]) + ", "
+            #     + str(listPoints[1][-1][1]) + ")"))
     except:
         print("add point: type value error")
-        messagebox.showinfo(title="Некорректный ввод",
-                            message="Введите в поле х: координату х(число)\n"
-                            "в поле у: координату у(число)\nв поле множество: "
-                            "1 - первое мн., 2- второе мн.")
+        messagebox.showinfo(title="Некорректный ввод", message=dataError)
 
-    listEntry[0].delete(0, END); listEntry[1].delete(0, END); listEntry[2].delete(0, END)
+    list(map(lambda el: el.delete(0, END), listEntry))
     showPoints(placeGraph, listPoints)
-
 
 
 def editPoint(placeGraph, listEntry, listsBox, listsPoints):
@@ -180,4 +176,23 @@ def editPoint(placeGraph, listEntry, listsBox, listsPoints):
 
     list(map(lambda el: el.delete(0, END), listEntry))
     showPoints(placeGraph, listsPoints)
+
+
+def cleanAll(placeGraph, listEntry, listsBox, listsPoints):
+    placeGraph.delete("all")
+    listsBox[0].delete(0, END)
+    listsBox[1].delete(0, END)
+    # list(map(lambda entry: entry.delete(0, END), lis))
+    listEntry[0].delete(0, END)
+    listEntry[1].delete(0, END)
+    listEntry[2].delete(0, END)
+    # list(map(lambda list: list.clear(), listsPoints))
+    listsPoints[0].clear()
+    listsPoints[0].clear()
+
+
+def clearPlaceGraph(placeGraph):
+    placeGraph.delete("all")
+
+
 

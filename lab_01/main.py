@@ -51,6 +51,13 @@ buttonCreateGraph = createButton(window, "показать решение", (15,
     partial(createGraph, placeGraph, listAllPoint))
 buttonShowPoints = createButton(window, "показать точки", (15, 2), 
     partial(showPoints, placeGraph, listAllPoint))
+buttonCreateCs = createButton(window, "показать все объекты", (20, 2), 
+    partial(createGraph, placeGraph, listAllPoint, isVisual=True))
+buttonClear = createButton(window, "очистить всё", (15, 2), 
+    partial(cleanAll, placeGraph, listEntry, listBoxs, listAllPoint))
+buttonClearGraph = createButton(window, "очистить холст", (15, 2), 
+    partial(clearPlaceGraph, placeGraph))
+
 
 # set location
 placeGraph.pack(side=RIGHT)
@@ -70,10 +77,13 @@ label1Type.place(x=5, y=370)
 label2Type.place(x=270, y=370)
 
 buttonShowPoints.place(x=5, y=80, anchor="nw")
+buttonClear.place(x=170, y=80)
+buttonClearGraph.place(x=170, y=130)
 buttonAdd.place(x=5, y=130, anchor="nw")
 buttonRemove.place(x=5, y=180, anchor="nw")
 buttonEdit.place(x=5, y=230, anchor="nw")
 buttonCreateGraph.place(x=5, y=280, anchor="nw")
+buttonCreateCs.place(x=5, y=330)
 
 scrollbar.place(x=190, y=400)
 scrollbar2.place(x=425, y=400)
